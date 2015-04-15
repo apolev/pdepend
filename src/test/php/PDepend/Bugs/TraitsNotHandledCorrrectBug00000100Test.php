@@ -42,6 +42,9 @@
  */
 
 namespace PDepend\Bugs;
+use PDepend\Source\AST\ASTArtifactList\CollectionArtifactFilter;
+use PDepend\Source\AST\ASTArtifactList\PackageArtifactFilter;
+use PDepend\Metrics\Analyzer\InheritanceAnalyzer;
 
 /**
  * Test case issue 00000100.
@@ -63,5 +66,14 @@ class TraitsNotHandledCorrrectBug00000100Test extends AbstractRegressionTest
     public function testHandlingOfSelfReferenceInTrait()
     {
         $this->assertNotNull($this->parseCodeResourceForTest());
+    }
+
+    public function testHandlingConflictResolution()
+    {
+        $filter = CollectionArtifactFilter::getInstance();
+        $filter->setFilter(new PackageArtifactFilter(array('library')));
+        $namespaces = self::parseTestCaseSource(__METHOD__);
+        $analyzer = new InheritanceAnalyzer();
+        $analyzer->analyze($namespaces);
     }
 }
